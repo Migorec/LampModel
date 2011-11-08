@@ -18,6 +18,17 @@ nLogTable =logTable nTable
 
 sigmaLogTable = logTable sigmaTable		  
 
+linterpolate :: Double -> [(Double,Double)] -> Double
+linterpolate x l =  y1*(y1/y2)**((x-x1)/(x1-x2))
+    where x1 = fst$fst nods
+          x2 = fst$snd nods
+          y1 = snd$fst nods
+          y2 = snd$snd nods
+          nods = srch l
+          srch (x1:x2:[]) = (x1,x2)
+          srch (x1:x2:xs) | x < fst x2 = (x1,x2)
+                          | otherwise = srch (x2:xs)
+
 interpolate :: Double -> [(Double,Double)] -> Double
 interpolate x l =  (x-x1)*(y2-y1)/(x2-x1) + y1
     where x1 = fst$fst nods
@@ -32,10 +43,13 @@ interpolate x l =  (x-x1)*(y2-y1)/(x2-x1) + y1
 logTableT :: Double -> [(Double,[(Double,Double)])] -> [(Double,Double)]
 logTableT t table =  map (\x -> ({-exp$-}fst x,exp (interpolate ({-log-} t) (snd x)))) table                         
                           
+tableT :: Double -> [(Double,[(Double,Double)])] -> [(Double,Double)]
+tableT t table = map (\x -> (fst x, linterpolate t (snd x))) table                          
+                          
 ntT :: Double -> [(Double,Double)] -- На вход T - на выход таблица зависимости от P
-ntT t = logTableT t nLogTable
+ntT t = tableT t nTable--logTableT t nLogTable
 
-sigmaT t = logTableT t sigmaLogTable 
+sigmaT t = tableT t sigmaTable --logTableT t sigmaLogTable 
 
 nt :: Double -> Double -> Double
 nt p t = interpolate p (ntT t) 
