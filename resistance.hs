@@ -9,7 +9,7 @@ import Param
 
 
 
-rp i = l/(2*pi*int)
+rp i = l/(2*r*r*pi*int)
     where int = trapezeIntegrate f 0 1 20
           f = (\z -> (sigma pt (t z)) * z)
           t = tz (abs i)
