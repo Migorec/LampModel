@@ -1,5 +1,60 @@
 ﻿module Tables (nt,sigma,t0,m) where
+logTable = map (\x -> (fst x, map (\y -> ({-log$-}fst y,log$snd y)) (snd x)))
+          
+nLogTable =logTable nTable
 
+sigmaLogTable = logTable sigmaTable		  
+
+finterpolate :: Double -> [(Double,a)] -> (a->Double)-> Double
+finterpolate x l f =  (x-x1)*(y2-y1)/(x2-x1) + y1
+    where x1 = fst$fst nods
+          x2 = fst$snd nods
+          y1 = f$snd$fst nods
+          y2 = f$snd$snd nods
+          nods = srch l
+          srch (x1:x2:[]) = (x1,x2)
+          srch (x1:x2:xs) | x < fst x2 = (x1,x2)
+                          | otherwise = srch (x2:xs)
+
+flinterpolate :: Double -> [(Double,a)] -> (a->Double) -> Double
+flinterpolate x l f =  y1*(y1/y2)**((x-x1)/(x1-x2))
+    where x1 = fst$fst nods
+          x2 = fst$snd nods
+          y1 = f$snd$fst nods
+          y2 = f$snd$snd nods
+          nods = srch l
+          srch (x1:x2:[]) = (x1,x2)
+          srch (x1:x2:xs) | x < fst x2 = (x1,x2)
+                          | otherwise = srch (x2:xs)
+
+interpolate :: Double -> [(Double,Double)] -> Double
+interpolate x l =  finterpolate x l id
+
+linterpolate :: Double -> [(Double,Double)] -> Double
+linterpolate x l = flinterpolate x l id
+                          
+logTableT :: Double -> [(Double,[(Double,Double)])] -> [(Double,Double)]
+logTableT t table =  map (\x -> ({-exp$-}fst x,exp (interpolate ({-log-} t) (snd x)))) table                         
+                          
+tableT :: Double -> [(Double,[(Double,Double)])] -> [(Double,Double)]
+tableT t table = map (\x -> (fst x, linterpolate t (snd x))) table                          
+                          
+ntT :: Double -> [(Double,Double)] -- На вход T - на выход таблица зависимости от P
+ntT t = tableT t nTable--logTableT t nLogTable
+
+sigmaT t = tableT t sigmaTable --logTableT t sigmaLogTable 
+
+nt :: Double -> Double -> Double
+nt p t = interpolate p (ntT t) 
+
+sigma :: Double ->  Double -> Double
+sigma p t = interpolate p (sigmaT t) 
+
+t0 :: Double -> Double
+t0 i = interpolate i t0Table
+
+m :: Double -> Double
+m i = interpolate i mTable
 t0Table = [(0.5,6400),(1.0,6790),(5.0,7150),(10,7270),(50,8010),(200,9185),(400,10010),(800,11140),(1200,12010)]
 
 mTable =  [(0.5,0.4),(1.0,0.55),(5.0,1.7),(10,3.0),(50,11.0),(200,32.0),(400,40.0),(800,41.0),(1200,39.0)]
@@ -543,53 +598,3 @@ wp25 = [[3.48e-2,3.78e-2,3.97e-2,3.98e-2,3.96e-2,3.98e-2,4.0e-2,4.03e-2,3.96e-2,
          3690.0,3740.0,3780.0,3740.0,3690.0,3590.0,3030.0,1500.0,417.0,65.6,16.1,5.96,6.63,17.8,67.2,252.0,376.0,400.0,
          403.0,399.0,375.0,255.0,67.6,17.5,3.34,16.9,50.4,91.0,93.1,93.2,93.2,93.1,92.7,89.7,70.0,26.3,3470.0]]               
                
-logTable = map (\x -> (fst x, map (\y -> ({-log$-}fst y,log$snd y)) (snd x)))
-          
-nLogTable =logTable nTable
-
-sigmaLogTable = logTable sigmaTable		  
-
-linterpolate :: Double -> [(Double,Double)] -> Double
-linterpolate x l =  y1*(y1/y2)**((x-x1)/(x1-x2))
-    where x1 = fst$fst nods
-          x2 = fst$snd nods
-          y1 = snd$fst nods
-          y2 = snd$snd nods
-          nods = srch l
-          srch (x1:x2:[]) = (x1,x2)
-          srch (x1:x2:xs) | x < fst x2 = (x1,x2)
-                          | otherwise = srch (x2:xs)
-
-interpolate :: Double -> [(Double,Double)] -> Double
-interpolate x l =  (x-x1)*(y2-y1)/(x2-x1) + y1
-    where x1 = fst$fst nods
-          x2 = fst$snd nods
-          y1 = snd$fst nods
-          y2 = snd$snd nods
-          nods = srch l
-          srch (x1:x2:[]) = (x1,x2)
-          srch (x1:x2:xs) | x < fst x2 = (x1,x2)
-                          | otherwise = srch (x2:xs)
-                          
-logTableT :: Double -> [(Double,[(Double,Double)])] -> [(Double,Double)]
-logTableT t table =  map (\x -> ({-exp$-}fst x,exp (interpolate ({-log-} t) (snd x)))) table                         
-                          
-tableT :: Double -> [(Double,[(Double,Double)])] -> [(Double,Double)]
-tableT t table = map (\x -> (fst x, linterpolate t (snd x))) table                          
-                          
-ntT :: Double -> [(Double,Double)] -- На вход T - на выход таблица зависимости от P
-ntT t = tableT t nTable--logTableT t nLogTable
-
-sigmaT t = tableT t sigmaTable --logTableT t sigmaLogTable 
-
-nt :: Double -> Double -> Double
-nt p t = interpolate p (ntT t) 
-
-sigma :: Double ->  Double -> Double
-sigma p t = interpolate p (sigmaT t) 
-
-t0 :: Double -> Double
-t0 i = interpolate i t0Table
-
-m :: Double -> Double
-m i = interpolate i mTable
