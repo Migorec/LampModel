@@ -52,7 +52,7 @@ mTail t p nu (zm:zn:zp:zs) = (aN,bN,dN,fN):(mTail t p nu (zn:zp:zs))
           fN = 3*r*r*r*kn*upn*vN
           
     
-k=7242 
+k=1.38e-23 --   7242 
 mr = 0.786
 
 up :: Double -> Double ->  Double
