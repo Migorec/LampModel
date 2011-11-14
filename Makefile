@@ -1,9 +1,11 @@
 
-main.exe : electrotech.hs main.hs methods.hs param.hs pressure.hs resistance.hs tables.hs temperature.hs
-	ghc main.hs -O2 -outputdir out
+main.exe : main.hs
+	ghc --make Main -optl-static -O2 -outputdir out -H14m
 	
 result/%.txt : main.exe
 	main.exe
 
-draw : result/%.txt mplot.gp
-	gnuplot mplot.gp
+
+	
+draw : result/%.txt aplot.gp
+	gnuplot aplot.gp

@@ -1,5 +1,5 @@
 ﻿module Main where
 
-import Electrotech
+import RadTransferTest
 
 main = test
