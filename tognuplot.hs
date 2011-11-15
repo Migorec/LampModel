@@ -14,6 +14,7 @@ drawTempAndF iList= do  let ni = zip [2..(length iList + 1)] iList
                                           hPutStrLn h "set tmargin 0"
                                           hPutStrLn h "set bmargin 0"
                                           hPutStrLn h "set size 0.3, 0.8"
+                                          hPutStrLn h "set xrange [0:1]"
                                           hPutStrLn h "set multiplot"
                                           hPutStrLn h "set origin 0.1, 0.1"
                                           hPutStrLn h ("plot "++ (concat$intersperse "," (map (\s -> "\"result\\\\t.txt\" "++s) plot)))
