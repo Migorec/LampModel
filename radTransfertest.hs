@@ -6,7 +6,7 @@ import Temperature
 import Param
 import IO
 import ToGnuplot
-iTable =[0.5,1,5,10,50,200,400,800,1200] 
+iTable =[50,200,350,500] 
 
 test :: IO()
 test = do let ts = map tz iTable -- [z -> t]
