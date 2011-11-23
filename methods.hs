@@ -4,6 +4,7 @@
                 sweep) 
 where
 
+
 trapezeIntegrate f a b n = ((sum $ map f [a + h, a + 2*h .. b - h]) + t) * h
     where
         t = (f a + f b)/2
@@ -21,20 +22,23 @@ iteration f x eps | abs (x-xn){-/abs( xn)-} < eps = xn
     
     
 sweep' :: Double -> Double -> [(Double,Double,Double,Double)] -> [Double]
-sweep' xsi eta [(a,b,d,f),(_,bn,dn,fn)] = [y,yn]
-    where yn = (eta*bn-fn)/(dn-xsi*bn)
-          y = xsi*yn + eta
+sweep' xsi eta [(a,b,d,f),(an,bn,_,fn)]= [y,yn]
+    where xsi' = d/(b - xsi*a)
+          eta' = (eta * a + f)/(b- xsi*a)
+          y = xsi'*yn+eta'
+          yn = (an*eta'+fn)/(bn-an*xsi')
 sweep' xsi eta ((a,b,d,f):ls) = y:ys
-            where ys = sweep' xsi' eta' ls
-                  y' = head ys
-                  y = xsi*y' + eta
-                  xsi' = d/(b-a*xsi)
-                  eta' = (a*eta+f)/(b-a*xsi)
+    where xsi' = d/(b - xsi*a)
+          eta' = (eta * a + f)/(b- xsi*a)
+          ys = sweep' xsi' eta' ls
+          yn = head ys
+          y = xsi'*yn+eta'
+
     
 sweep :: [(Double,Double,Double,Double)] -> [Double]
-sweep ((a1,b1,_,f1):ls) = y1:ys
-        where ys = sweep' xsi eta ls
-              y2 = head ys
-              y1 = b1/a1*y2-f1/a1
-              xsi = b1/a1
-              eta = f1/a1
+sweep ((_,b,d,f):ls) = y:ys
+    where xsi = d/b
+          eta = f/b
+          y=xsi*y2+eta
+          y2 = head ys
+          ys = sweep' xsi eta ls
