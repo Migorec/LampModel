@@ -27,4 +27,10 @@ c=3e10 -- скорость света ??
 
 hp = 6.63e-34 -- постоянная планка ?7
 
-zGrid = makeNUGrid 0 1 20 0.2
+xGrid = makeGrid 0 1 50
+
+zGrid = nuGrid xGrid 0.2
+
+z2Grid = nuGrid (f xGrid) 0.2
+    where f [x1,x2] = [(x1+x2)/2]
+          f (x1:x2:xs) = ((x1+x2)/2):(f (x2:xs))
