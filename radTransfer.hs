@@ -10,11 +10,20 @@ import Pressure
 divF :: (Double -> Double)      -- T(z) 
         -> Double               -- P 
         -> [(Double,Double)]    -- difF (z)
-divF t p = zip zGrid (f (replicate (length zGrid) 0.0) (map (\(nu, un) -> (nu,map (\(z,u)-> (c*(knu p (t z) nu)*((up (t z) nu)-u))) un))   
+divF t p = zip zGrid (f (replicate (length zGrid) 0.0) freqTable)
+    where f ss [nu] = ss
+          f ss (nup:nun:nus) = f (zipWith (+) ss s) (nun:nus)
+            where nu = (nun+nup)/2
+                  u = map snd (divFnu t p nu)
+                  ur = map (\z -> up (t z) nu) zGrid
+                  kn = map (\z -> knu p (t z) nu) zGrid
+                  s' = zipWith (-) ur u
+                  s = map (*(c*(nun-nup))) (zipWith (*) kn s')
+{--divF t p = zip zGrid (f (replicate (length zGrid) 0.0) (map (\(nu, un) -> (nu,map (\(z,u)-> (c*(knu p (t z) nu)*((up (t z) nu)-u))) un))   
                                                   (map  (\x -> (x,divFnu t p x)) freqTable)))
     where f ss [l] = ss
           f ss ((nu1,l1):(nu2,l2):ls) = f   (zipWith (+) (zipWith (\(u1) (u2) -> (u1+u2)/2*(nu2-nu1)) l1 l2) ss) ((nu2,l2):ls)
-
+--}
           
 {-divFnu :: (Double -> Double)      -- T(z) 
         -> Double               -- P 
