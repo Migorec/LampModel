@@ -1,17 +1,29 @@
 module RadTransferTest where
 
 import RadTransfer
-import Pressure
-import Temperature
+--import Temperature
 import Param
 import IO
-import ToGnuplot
-iTable =[50,200,350,500] 
+
+
+tz (t0, n) = \z -> t0 - (t0 -2000) * z ** n
+ts = map tz [(8000,4),(8000,8),(9000,4),(9000,8),(10000,4),(10000,8)]
+et = [[3.024e3,3.031e3,3.022e3,2.934e3,2.709e3,2.336e3,1.863e3,1.372e3,9.346e2,5.888e2,3.514e2,2.104e2,1.162e2,5.618e1,2.056e1,6.594e0,-4.25e0,-1.219e1,-1.876e1,-2.383e1,-2.842e1,-3.288e1,-3.728e1,-4.165e1,-4.602e1,-5.043e1,-5.487e1,-5.937e1,-6.394e1,-6.861e1,-7.339e1,-7.876e1,-8.479e1,-9.142e1,-9.885e1,-1.073e2,-1.171e2,-1.289e2,-1.431e2,-1.606e2,-1.826e2] ,
+     [2.877e3,2.880e3,2.888e3,2.902e3,2.918e3,2.926e3,2.908e3,2.839e3,2.696e3,2.469e3,2.165e3,1.810e3,1.437e3,1.079e3,7.611e2,4.995e2,3.047e2,1.783e2,8.517e1,1.9e1,-2.58e1,-4.978e1,-6.252e1,-7.389e1,-8.345e1,-9.252e1,-1.009e2,-1.098e2,-1.194e2,-1.298e2,-1.411e2,-1.537e2,-1.677e2,-1.832e2,-2.007e2,-2.215e2,-2.475e2,-2.8e2,-3.226e2,-3.819e2,-4.710e2],
+     [1.539e4,1.542e4,1.536e4,1.488e4,1.369e4,1.174e4,9.294e3,6.775e3,4.561e3,2.844e3,1.608e3,8.085e2,3.285e2,6.834e1,-6.382e1,-1.395e2,-1.804e2,-1.978e2,-2.106e2,-2.221e2,-2.335e2,-2.452e2,-2.578e2,-2.713e2,-2.860e2,-3.016e2,-3.188e2,-3.373e2,-3.570e2,-3.782e2,-4.008e2,-4.250e2,-4.527e2,-4.852e2,-5.223e2,-5.625e2,-6.158e2,-6.765e2,-7.521e2,-8.472e2,-9.702e2],
+     [1.442e4,1.444e4,1.448e4,1.455e4,1.463e4,1.466e4,1.456e4,1.419e4,1.344e4,1.227e4,1.017e4,8.907e3,7.022e3,5.234e4,3.617e3,2.404e3,1.411e3,7.023e2,2.275e2,-7.118e1,-2.390e2,-3.428e2,-4.085e2,-4.476e2,-4.6877e2,-4.935e2,-5.199e2,-5.5e2,-5.856e2,-6.264e2,-6.731e2,-7.268e2,-7.898e2,-8.627e2,-9.475e2,-1.047e3,-1.174e3,-1.338e3,-1.558e3,-1.873e3,-2.369e3],
+     [5.601e4,5.616e4,5.607e4,5.462e4,5.069e4,4.401e4,3.540e4,2.631e4,1.811e4,1.136e4,6.378e3,3.227e3,1.367e3,2.930e2,-2.598e2,-5.2e2,-6.519e2,-7.234e2,-7.610e2,-7.901e2,-8.254e2,-8.638e2,-9.061e2,-9.553e2,-1.009e3,-1.069e3,-1.134e3,-1.206e3,-1.285e3,-1.372e3,-1.466e3,-1.568e3,-1.680e3,-1.812e3,-1.969e3,-2.153e3,-2.372e3,-2.641e3,-2.979e3,-3.418e3,-4.006e3]]
 
 test :: IO()
-test = do let ts = map tz iTable -- [z -> t]
-          let dFs = map (\t -> divF t (p t)) ts --[[(z,dF)]]
-          bracket (openFile "result\\t.txt" WriteMode)
+test = do 
+          let dFs = map (\t -> divF t 15) (take 5 ts) --[[(z,dF)]]
+          let err = zipWith (\fs es ->zipWith (\f e ->  abs((snd f-e)/e)) fs es) dFs et
+          let amerr  = map (\l -> ((sum l)/(fromIntegral$length l),maximum l)) err
+          mapM_ (\(a,m) -> do putStrLn ("AvErr:"++(show a))
+                              putStrLn ("MaxErr:"++(show m))
+                              putStrLn "") amerr
+          
+          {-bracket (openFile "result\\t.txt" WriteMode)
                   hClose
                   (\h -> do mapM_ (\z -> do hPutStr h (show z)
                                             mapM_ (\t -> hPutStr h ("\t"++(show$t z))) ts
@@ -21,4 +33,4 @@ test = do let ts = map tz iTable -- [z -> t]
                   (\h -> do mapM_ (\z -> do hPutStr h (show z)
                                             mapM_ (\f -> hPutStr h ("\t"++(maybe "-" (show) (lookup z f)))) dFs
                                             hPutStrLn h "" ) zGrid )
-          drawTempAndF iTable
+          drawTempAndF iTable-}
