@@ -8,6 +8,8 @@ result/df.txt : main.exe
 result/t.txt : main.exe
 	main.exe
 
+test : main.exe
+	main.exe
 	
 draw : result/*.txt aplot.gp
 	gnuplot aplot.gp
