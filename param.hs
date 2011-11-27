@@ -25,11 +25,15 @@ rk = 0.5 -- сопротивление контура
 
 c=3e10 -- скорость света ??
 
+tau = 2e-6 -- шаг по времени
+
 hp = 6.63e-34 -- постоянная планка ?7
 
 xGrid = makeGrid 0 1 40
 
 zGrid = nuGrid xGrid 0.2
+
+pWave = pGrid xGrid 0.2
 
 z2Grid = nuGrid (f xGrid) 0.2
     where f [x1,x2] = [(x1+x2)/2]
