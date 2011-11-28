@@ -5,7 +5,7 @@ nuGrid xs delta = map (\x -> 1/alpha*atan (x * tan alpha)) xs
     where alpha = pi/2 - delta
 
 
-pGrid :: [Double] -> Double -> Double
+pGrid :: [Double] -> Double -> [Double]
 pGrid xs delta = map (\x -> alpha/ymax * (1+x*x*ymax*ymax)) xs
     where alpha = pi/2 - delta
           ymax = tan alpha
