@@ -33,10 +33,17 @@ xsi = 0.6 -- параметр метожа релаксации
 
 xGrid = makeGrid 0 1 40
 
+hx = tail$head xGrid - head xGrid
+
+x2Grid = f xGrid
+    where f [x1,x2] = [(x1+x2)/2]
+          f (x1:x2:xs) = ((x1+x2)/2):(f (x2:xs))
+
 zGrid = nuGrid xGrid 0.2
+
+p2Wave = pGrid x2Grid 0.2
 
 pWave = pGrid xGrid 0.2
 
-z2Grid = nuGrid (f xGrid) 0.2
-    where f [x1,x2] = [(x1+x2)/2]
-          f (x1:x2:xs) = ((x1+x2)/2):(f (x2:xs))
+z2Grid = nuGrid x2Grid 0.2
+    
