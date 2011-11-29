@@ -1,4 +1,5 @@
 ﻿module Methods (trapezeIntegrate,
+                tableTrapezeIntegrate,
                 dihotomy,
                 iteration,
                 sweep) 
@@ -9,6 +10,12 @@ trapezeIntegrate f a b n = ((sum $ map f [a + h, a + 2*h .. b - h]) + t) * h
     where
         t = (f a + f b)/2
         h = (b - a) / n
+
+        
+-- хорошо бы переписать с хвостовой рекурсией
+tableTrapezeIntegrate :: [(Double,Double)] -> Double
+tableTrapezeIntegrate [(x1,y1),(x2,y2)] = (y1+y2)/2*(x2-x1)
+tabletrapezeIntegrate ((x1,y1):(x2,y2):xys) =(y1+y2)/2*(x2-x1) + tableTrapezeIntegrate ((x2,y2):xys)
         
 dihotomy f a b eps | abs(a-b) < eps = x
                    | f x == 0 = x
