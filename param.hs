@@ -33,7 +33,7 @@ xsi = 0.6 -- параметр метожа релаксации
 
 xGrid = makeGrid 0 1 40
 
-hx = tail$head xGrid - head xGrid
+hx = (head.tail) xGrid - head xGrid
 
 x2Grid = f xGrid
     where f [x1,x2] = [(x1+x2)/2]
