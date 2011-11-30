@@ -1,4 +1,4 @@
-﻿module Tables (nt,sigma,t0,m,freqTable,knu) where
+﻿module Tables (nt,sigma,t0,m,freqTable,knu,lambda,cpt) where
 logTable = map (\x -> (fst x, map (\y -> ({-log$-}fst y,log$snd y)) (snd x)))
           
 nLogTable =logTable nTable
